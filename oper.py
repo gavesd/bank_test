@@ -30,7 +30,7 @@ while True:
                 
         cursor.execute("INSERT INTO accounts( owner, balance) VALUES (%s , %s)" , (i , b ))
         db.commit()
-        break
+        
     elif c == 2:
         i = str(input("Ведіть своє ім\'я і прізвище : "))
         cursor.execute("SELECT accounts.id ,accounts.owner , accounts.balance  FROM accounts WHERE accounts.owner = %s" , (i ,))
@@ -39,23 +39,26 @@ while True:
             print (f"Ваші рахунки : {row[0]}\nБаланс рахунку- {row[2]}")
             
     elif c == 3:
-      d = int(input("Введіть номер рахуку : ")) 
-      b_n = int(input("Сума поповнення : "))
-      r1 = 'Поповнення'
-      cursor.execute("UPDATE accounts SET accounts.balance = accounts.balance +%s WHERE accounts.id =%s  " , (b_n , d))
-      f1 = cursor.fetchall()
-      for row in f1 :
-        print (f"Номер рахунку : {row[0]}\nБаланс - {row[2]}")
-        print ("Рахунок поповнено ")
-        db.commit()
+         d = int(input("Введіть номер рахуку : ")) 
+         b_n = int(input("Сума поповнення : "))
+         r1 = 'Поповнення'
+         cursor.execute("INSERT INTO transactions (account_id, type, amount) VALUES (%s , %s ,%s)" , (d,r1, b_n))
+         cursor.execute("UPDATE accounts SET accounts.balance = accounts.balance +%s WHERE accounts.id =%s  " , (b_n , d))
+         cursor.execute("SELECT * FROM accounts WHERE accounts.id =%s" , (d ,  ))
+         f1 = cursor.fetchall()
+         for row in f1 :
+            print (f"Номер рахунку : {row[0]}\nБаланс - {row[2]}")
+            print ("Рахунок поповнено ")
+         db.commit()
 
     elif c == 4:
         d1 = int(input("Введіть номер рахуку : "))
         b_n1 = int(input("Сума зняти : "))
         m1 = 'Знятя'
         poh = 'Повернення'
-        #cursor.execute("INSERT INTO transactions (account_id, type, amount) VALUES (%s , %s ,%s)" , (d1,m1 , b_n1))
+        cursor.execute("INSERT INTO transactions (account_id, type, amount) VALUES (%s , %s ,%s)" , (d1,m1 , b_n1))
         cursor.execute("UPDATE accounts SET accounts.balance = accounts.balance -%s WHERE accounts.id =%s  " , (b_n1 , d1))
+        cursor.execute("SELECT * FROM accounts WHERE accounts.id =%s" , (d1 ,  ))
         f = cursor.fetchall()
         for row in f :
             print (f"Номер рахунку : {row[0]}\nБаланс - {row[2]}")
@@ -79,7 +82,7 @@ while True:
             if pof == kod :
                 print("Ваші кошти повернуться зараз!")
                 cursor.execute("UPDATE accounts SET accounts.balance = accounts.balance +%s WHERE accounts.id =%s  " , (b_n1 , d1))
-                #cursor.execute("INSERT INTO transactions (account_id, type, amount) VALUES (%s , %s ,%s)" , (d1,poh , b_n1))
+                cursor.execute("INSERT INTO transactions (account_id, type, amount) VALUES (%s , %s ,%s)" , (d1,poh , b_n1))
         db.commit()
 
     elif c == 5:
@@ -106,4 +109,9 @@ while True:
         cursor.execute("SELECT * FROM transactions WHERE transactions.account_id=%s " ,(t , ))
         f1 = cursor.fetchall()
         for row in f1 :
-            print (f" {row[0]}. {row[2]} Сума - {row[3]} Дата - {row[4]}")
+            print (f"{row[2]} , Сума - {row[3]} , Дата - {row[4]}")
+
+    elif c == 7 :
+        print("Ви вийли з системи!")
+        break
+db.close()
