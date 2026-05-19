@@ -1,5 +1,11 @@
 import mysql.connector 
 import random
+import users
+
+usert = users.start()
+
+
+
 
 db  = mysql.connector.connect(
     user = "root",
@@ -17,23 +23,28 @@ while True:
     
     if c == 1 :
         print("___________________")
-        i = str(input("Ведіть своє ім\'я і прізвище : "))
+       
+        #i = str(input("Ведіть своє ім\'я і прізвище : "))
         b = int(input("Введіть свій депозит : "))
+        cursor.execute("SELECT login FROM usert WHERE login = %s", (usert,))
+        owner = cursor.fetchone()[0]
         if b > 0 :
             fas =''
             for x in range(5):
                 fas = fas + random.choice(list('1234567890'))
                 print("Ваш код для внесення депозиту :" , fas)
                 
-            else :
-                print("Ваш депозит додано!")
+        else :
+            print("Ваш депозит додано!")
                 
-        cursor.execute("INSERT INTO accounts( owner, balance) VALUES (%s , %s)" , (i , b ))
+        cursor.execute("INSERT INTO accounts( owner, balance) VALUES (%s , %s)" , (owner , b ))
         db.commit()
         
     elif c == 2:
-        i = str(input("Ведіть своє ім\'я і прізвище : "))
-        cursor.execute("SELECT accounts.id ,accounts.owner , accounts.balance  FROM accounts WHERE accounts.owner = %s" , (i ,))
+        #i = str(input("Ведіть своє ім\'я і прізвище : "))
+        cursor.execute("SELECT login FROM usert WHERE login = %s", (usert,))
+        owner = cursor.fetchone()[0]
+        cursor.execute("SELECT accounts.id ,accounts.owner , accounts.balance  FROM accounts WHERE accounts.owner = %s" , (owner ,))
         rows = cursor.fetchall()
         for row in rows:
             print (f"Ваші рахунки : {row[0]}\nБаланс рахунку- {row[2]}")
