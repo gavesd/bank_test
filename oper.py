@@ -76,7 +76,7 @@ while True:
             pof =''
             for x in range(5):
                 pof = pof + random.choice(list('1234567890'))
-                print("Ваш код для пітведження рахунку :" , pof)
+            print("Ваш код для пітведження рахунку :" , pof)
 
             kod = str(input("Введіть код :"))
             if pof == kod :
@@ -92,6 +92,7 @@ while True:
         q = int(input("Введіть суму : "))
         m = 'Знятя'
         r = 'Поповнення'
+        tro = 'Повернення'
         try :
             db.autocommit = False
             cursor.execute("UPDATE accounts SET accounts.balance = accounts.balance -%s WHERE accounts.id =%s" , (q,n_im ))
@@ -100,6 +101,30 @@ while True:
             cursor.execute("UPDATE accounts SET accounts.balance = accounts.balance +%s WHERE accounts.id =%s" , (q,im ))
             cursor.execute("INSERT INTO transactions (account_id, type, amount) VALUES (%s , %s ,%s)" , (im ,r , q))
             print("Транзакцію було успішно реалізовано")
+            db.commit()
+            
+            print("---------------------")
+            print ("Якщо це не ви зняли гроші\nВведіть цифру - 1\nЯкщо це ви\nВведіть цифру - 0\n")
+            a = int(input())
+            if a == 0:
+                print("Дякую що ви зреагували!")
+
+            elif a == 1 :
+                db.rollback()
+                print("Вам зараз згенерується код ведіть в поле!")
+                pof =''
+                for x in range(5):
+                    pof = pof + random.choice(list('1234567890'))
+                print("Ваш код для пітведження рахунку :" , pof)
+
+                kod = str(input("Введіть код :"))
+                if pof == kod :
+                    print("Ваші кошти повернуться зараз!")
+                    cursor.execute("UPDATE accounts SET accounts.balance = accounts.balance +%s WHERE accounts.id =%s  " , ( q , n_im))
+                    cursor.execute("INSERT INTO transactions (account_id, type, amount) VALUES (%s , %s ,%s)" , (n_im,tro , q ))
+
+                    cursor.execute("UPDATE accounts SET accounts.balance = accounts.balance -%s WHERE accounts.id =%s  " , ( q , im))
+                    cursor.execute("INSERT INTO transactions (account_id, type, amount) VALUES (%s , %s ,%s)" , (im,tro , q ))
             db.commit()
         except mysql.connector.Error as error :
             print("Транзакцію було скасовано ")
