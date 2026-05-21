@@ -32,7 +32,7 @@ while True:
             fas =''
             for x in range(5):
                 fas = fas + random.choice(list('1234567890'))
-                print("Ваш код для внесення депозиту :" , fas)
+            print("Ваш код для внесення депозиту :" , fas)
                 
         else :
             print("Ваш депозит додано!")
